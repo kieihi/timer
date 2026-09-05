@@ -386,10 +386,10 @@
         localStorage.removeItem(storageKey);
         card.classList.remove("running");
         setInputsDisabled(false);
-        displayLabel.textContent = "Finished";
+        displayLabel.textContent = "kjør!";
         remaining.textContent = "00:00:00";
         document.title = "Time reached · Exact Countdown";
-        setMessage("The target time has been reached.", "finished");
+        setMessage("Pang, starten har gått", "finished");
         if (millisecondsLate < 1500) playFinishSound();
       }
 
@@ -439,7 +439,7 @@
         );
 
         if (target.getTime() <= now.getTime()) {
-          setMessage("That time has already passed today. Choose a later time.", "error");
+          setMessage("Velg tid senere på dagen", "error");
           return;
         }
 
