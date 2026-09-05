@@ -229,28 +229,28 @@
 <body>
   <main id="timer-card">
     <header>
-      <h1>Exact Countdown</h1>
+      <h1>Excalibur start!</h1>
       <time id="clock" aria-label="Current time"></time>
     </header>
 
-    <p class="eyebrow" id="display-label">Time remaining</p>
+    <p class="eyebrow" id="display-label">Tid</p>
     <p id="remaining" role="timer" aria-live="off">00:00:00</p>
 
     <fieldset class="time-entry" id="time-entry">
-      <legend>Count down to a time today</legend>
+      <legend>Tell ned til klokkeslett</legend>
       <div class="fields">
         <div class="field">
-          <label for="hour">Hour</label>
+          <label for="hour">Timer</label>
           <input id="hour" type="number" min="0" max="23" inputmode="numeric" autocomplete="off" aria-label="Target hour">
         </div>
         <span class="colon" aria-hidden="true">:</span>
         <div class="field">
-          <label for="minute">Minute</label>
+          <label for="minute">Minutter</label>
           <input id="minute" type="number" min="0" max="59" inputmode="numeric" autocomplete="off" aria-label="Target minute">
         </div>
         <span class="colon" aria-hidden="true">:</span>
         <div class="field">
-          <label for="second">Second</label>
+          <label for="second">Sekunder</label>
           <input id="second" type="number" min="0" max="59" inputmode="numeric" autocomplete="off" aria-label="Target second">
         </div>
       </div>
@@ -258,15 +258,15 @@
 
     <label class="sound-row" for="sound-enabled">
       <input id="sound-enabled" type="checkbox" checked>
-      Play a sound when time is reached
+      Spill av lyd
     </label>
 
     <div class="actions">
-      <button id="start" type="button">Start countdown</button>
-      <button id="cancel" type="button">Cancel countdown</button>
+      <button id="start" type="button">Start</button>
+      <button id="cancel" type="button">Avbryt</button>
     </div>
 
-    <p id="message" role="status" aria-live="polite">Choose a time later today.</p>
+    <p id="message" role="status" aria-live="polite">Velg tid senere i dag.</p>
   </main>
 
   <script>
