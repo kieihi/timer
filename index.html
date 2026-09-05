@@ -418,7 +418,7 @@
         setInputsDisabled(true);
         displayLabel.textContent = "Time remaining";
         const targetDate = new Date(target);
-        setMessage(`teller ned til ${formatClock(targetDate)} today.`);
+        setMessage(`teller ned til ${formatClock(targetDate)}.`);
         stopTicker();
         tick();
         intervalId = window.setInterval(tick, 200);
