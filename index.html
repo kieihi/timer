@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07131d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Excalibur Start App</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07131d;
+      --panel: #0c1d2a;
+      --panel-top: #102736;
+      --text: #f2f8fb;
+      --muted: #8ea6b5;
+      --accent: #32d5d2;
+      --accent-dark: #062d31;
+      --danger: #ff7979;
+      --line: rgba(194, 229, 241, 0.13);
+      --shadow: 0 28px 80px rgba(0, 0, 0, 0.38);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
+      font-family: ui-rounded, "SF Pro Rounded", "SF Pro Display", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(50, 213, 210, 0.14), transparent 42%),
+        var(--bg);
+    }
+
+    main {
+      width: min(100%, 520px);
+      background: linear-gradient(180deg, var(--panel-top), var(--panel));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: clamp(24px, 6vw, 42px);
+    }
+
+    header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 5vw, 1.7rem);
+      letter-spacing: -0.025em;
+    }
+
+    #clock {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    #remaining {
+      margin: 0 0 34px;
+      color: var(--accent);
+      font-size: clamp(3.3rem, 15vw, 5.4rem);
+      font-weight: 700;
+      letter-spacing: -0.065em;
+      line-height: 0.95;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .time-entry {
+      border: 0;
+      margin: 0;
+      padding: 0;
+    }
+
+    legend {
+      width: 100%;
+      margin-bottom: 12px;
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 650;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .field { min-width: 0; }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 650;
+      text-align: center;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      appearance: textfield;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 13px 6px;
+      color: var(--text);
+      background: rgba(3, 12, 18, 0.38);
+      font: inherit;
+      font-size: 1.55rem;
+      font-weight: 650;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      outline: none;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { appearance: none; margin: 0; }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(50, 213, 210, 0.14);
+    }
+
+    input:disabled { opacity: 0.55; }
+
+    .colon {
+      margin-top: 23px;
+      color: var(--muted);
+      font-size: 1.45rem;
+      font-weight: 700;
+    }
+
+    .sound-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .sound-row input { width: 19px; height: 19px; accent-color: var(--accent); }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 11px;
+      margin-top: 28px;
+    }
+
+    button {
+      min-height: 52px;
+      border: 0;
+      border-radius: 15px;
+      padding: 0 18px;
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 750;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    #start {
+      color: #04262b;
+      background: var(--accent);
+      box-shadow: 0 12px 28px rgba(50, 213, 210, 0.17);
+    }
+
+    #start:active { transform: translateY(1px); }
+
+    #cancel {
+      display: none;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid var(--line);
+    }
+
+    .running #start { display: none; }
+    .running #cancel { display: block; }
+
+    #message {
+      min-height: 24px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    #message.error { color: var(--danger); }
+    #message.finished { color: var(--accent); font-weight: 700; }
+
+    @media (max-width: 380px) {
+      main { padding-inline: 20px; border-radius: 22px; }
+      .fields { gap: 5px; }
+      input[type="number"] { font-size: 1.3rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; }
+      button:active { transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main id="timer-card">
+    <header>
+      <h1>Exact Countdown</h1>
+      <time id="clock" aria-label="Current time"></time>
+    </header>
+
+    <p class="eyebrow" id="display-label">Time remaining</p>
+    <p id="remaining" role="timer" aria-live="off">00:00:00</p>
+
+    <fieldset class="time-entry" id="time-entry">
+      <legend>Count down to a time today</legend>
+      <div class="fields">
+        <div class="field">
+          <label for="hour">Hour</label>
+          <input id="hour" type="number" min="0" max="23" inputmode="numeric" autocomplete="off" aria-label="Target hour">
+        </div>
+        <span class="colon" aria-hidden="true">:</span>
+        <div class="field">
+          <label for="minute">Minute</label>
+          <input id="minute" type="number" min="0" max="59" inputmode="numeric" autocomplete="off" aria-label="Target minute">
+        </div>
+        <span class="colon" aria-hidden="true">:</span>
+        <div class="field">
+          <label for="second">Second</label>
+          <input id="second" type="number" min="0" max="59" inputmode="numeric" autocomplete="off" aria-label="Target second">
+        </div>
+      </div>
+    </fieldset>
+
+    <label class="sound-row" for="sound-enabled">
+      <input id="sound-enabled" type="checkbox" checked>
+      Play a sound when time is reached
+    </label>
+
+    <div class="actions">
+      <button id="start" type="button">Start countdown</button>
+      <button id="cancel" type="button">Cancel countdown</button>
+    </div>
+
+    <p id="message" role="status" aria-live="polite">Choose a time later today.</p>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const card = document.querySelector("#timer-card");
+      const clock = document.querySelector("#clock");
+      const remaining = document.querySelector("#remaining");
+      const displayLabel = document.querySelector("#display-label");
+      const hourInput = document.querySelector("#hour");
+      const minuteInput = document.querySelector("#minute");
+      const secondInput = document.querySelector("#second");
+      const soundEnabled = document.querySelector("#sound-enabled");
+      const startButton = document.querySelector("#start");
+      const cancelButton = document.querySelector("#cancel");
+      const message = document.querySelector("#message");
+      const inputs = [hourInput, minuteInput, secondInput];
+      const storageKey = "exactCountdownTarget";
+
+      let targetTime = null;
+      let intervalId = null;
+      let audioContext = null;
+      let alarmPlayed = false;
+
+      const twoDigits = value => String(value).padStart(2, "0");
+
+      function formatDuration(totalSeconds) {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        return `${twoDigits(hours)}:${twoDigits(minutes)}:${twoDigits(seconds)}`;
+      }
+
+      function formatClock(date) {
+        return `${twoDigits(date.getHours())}:${twoDigits(date.getMinutes())}:${twoDigits(date.getSeconds())}`;
+      }
+
+      function setMessage(text, kind = "") {
+        message.textContent = text;
+        message.className = kind;
+      }
+
+      function setInputsDisabled(disabled) {
+        inputs.forEach(input => { input.disabled = disabled; });
+      }
+
+      function setDefaultTime() {
+        const now = new Date();
+        const endOfDay = new Date(now);
+        endOfDay.setHours(23, 59, 59, 0);
+        const suggested = new Date(Math.min(now.getTime() + 5 * 60 * 1000, endOfDay.getTime()));
+        hourInput.value = twoDigits(suggested.getHours());
+        minuteInput.value = twoDigits(suggested.getMinutes());
+        secondInput.value = twoDigits(suggested.getSeconds());
+      }
+
+      function normalizeInput(input) {
+        const min = Number(input.min);
+        const max = Number(input.max);
+        const value = Math.max(min, Math.min(max, Number.parseInt(input.value || "0", 10)));
+        input.value = twoDigits(Number.isFinite(value) ? value : min);
+      }
+
+      function unlockAudio() {
+        if (!soundEnabled.checked) return;
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        audioContext ||= new AudioContextClass();
+        if (audioContext.state === "suspended") audioContext.resume();
+      }
+
+      function playFinishSound() {
+        if (!soundEnabled.checked || alarmPlayed) return;
+        alarmPlayed = true;
+        unlockAudio();
+        if (!audioContext) return;
+
+        const notes = [660, 880, 1100];
+        const startAt = audioContext.currentTime;
+        notes.forEach((frequency, index) => {
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          const noteStart = startAt + index * 0.23;
+          const noteEnd = noteStart + 0.18;
+          oscillator.type = "sine";
+          oscillator.frequency.value = frequency;
+          gain.gain.setValueAtTime(0.0001, noteStart);
+          gain.gain.exponentialRampToValueAtTime(0.35, noteStart + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0001, noteEnd);
+          oscillator.connect(gain).connect(audioContext.destination);
+          oscillator.start(noteStart);
+          oscillator.stop(noteEnd);
+        });
+      }
+
+      function stopTicker() {
+        if (intervalId !== null) window.clearInterval(intervalId);
+        intervalId = null;
+      }
+
+      function showReadyState() {
+        stopTicker();
+        targetTime = null;
+        alarmPlayed = false;
+        localStorage.removeItem(storageKey);
+        card.classList.remove("running");
+        setInputsDisabled(false);
+        displayLabel.textContent = "Time remaining";
+        remaining.textContent = "00:00:00";
+        document.title = "Exact Countdown";
+        setMessage("Choose a time later today.");
+      }
+
+      function finishTimer(millisecondsLate) {
+        stopTicker();
+        localStorage.removeItem(storageKey);
+        card.classList.remove("running");
+        setInputsDisabled(false);
+        displayLabel.textContent = "Finished";
+        remaining.textContent = "00:00:00";
+        document.title = "Time reached · Exact Countdown";
+        setMessage("The target time has been reached.", "finished");
+        if (millisecondsLate < 1500) playFinishSound();
+      }
+
+      function tick() {
+        const now = new Date();
+        clock.textContent = formatClock(now);
+        if (targetTime === null) return;
+
+        const difference = targetTime - now.getTime();
+        if (difference <= 0) {
+          finishTimer(Math.abs(difference));
+          return;
+        }
+
+        const secondsLeft = Math.ceil(difference / 1000);
+        const display = formatDuration(secondsLeft);
+        remaining.textContent = display;
+        document.title = `${display} · Exact Countdown`;
+      }
+
+      function beginCountdown(target, restored = false) {
+        targetTime = target;
+        alarmPlayed = false;
+        localStorage.setItem(storageKey, String(target));
+        card.classList.add("running");
+        setInputsDisabled(true);
+        displayLabel.textContent = "Time remaining";
+        const targetDate = new Date(target);
+        setMessage(`Counting down to ${formatClock(targetDate)} today.`);
+        stopTicker();
+        tick();
+        intervalId = window.setInterval(tick, 200);
+        if (!restored) unlockAudio();
+      }
+
+      function startCountdown() {
+        inputs.forEach(normalizeInput);
+        unlockAudio();
+
+        const now = new Date();
+        const target = new Date(now);
+        target.setHours(
+          Number(hourInput.value),
+          Number(minuteInput.value),
+          Number(secondInput.value),
+          0
+        );
+
+        if (target.getTime() <= now.getTime()) {
+          setMessage("That time has already passed today. Choose a later time.", "error");
+          return;
+        }
+
+        beginCountdown(target.getTime());
+      }
+
+      function restoreCountdown() {
+        const saved = Number(localStorage.getItem(storageKey));
+        if (!Number.isFinite(saved)) return false;
+
+        const now = new Date();
+        const target = new Date(saved);
+        const sameDay = now.getFullYear() === target.getFullYear()
+          && now.getMonth() === target.getMonth()
+          && now.getDate() === target.getDate();
+
+        if (sameDay && saved > now.getTime()) {
+          hourInput.value = twoDigits(target.getHours());
+          minuteInput.value = twoDigits(target.getMinutes());
+          secondInput.value = twoDigits(target.getSeconds());
+          beginCountdown(saved, true);
+          return true;
+        }
+
+        localStorage.removeItem(storageKey);
+        return false;
+      }
+
+      inputs.forEach(input => {
+        input.addEventListener("blur", () => normalizeInput(input));
+        input.addEventListener("focus", () => input.select());
+      });
+      startButton.addEventListener("click", startCountdown);
+      cancelButton.addEventListener("click", showReadyState);
+      document.addEventListener("visibilitychange", tick);
+
+      setDefaultTime();
+      if (!restoreCountdown()) tick();
+    })();
+  </script>
+</body>
+</html>
